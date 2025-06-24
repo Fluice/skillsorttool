@@ -1,0 +1,238 @@
+<!-- Save this as skill_sort_tool.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Skill Card Sort</title>
+  <style>
+    body {
+      font-family: "Gill Sans", sans-serif;
+      background-color: #EBF3F3;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #186f4d;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding: 20px;
+      gap: 10px;
+    }
+    .column {
+      background-color: #EEE9D5;
+      border: 2px solid #35548c;
+      border-radius: 8px;
+      flex: 1;
+      min-width: 200px;
+      padding: 10px;
+    }
+    .column h3 {
+      text-align: center;
+      color: #35548c;
+    }
+    .card {
+      background-color: #C1DBC9;
+      margin: 5px;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: move;
+    }
+    .stage-two {
+      display: none;
+      padding: 20px;
+    }
+    .selection-box {
+      margin-bottom: 20px;
+    }
+    .selection-box select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      background-color: #35548c;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    ul.sortable {
+      list-style: none;
+      padding: 0;
+    }
+    ul.sortable li {
+      background-color: #C1DBC9;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: grab;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+<header>
+  <h1>Skill Card Sort</h1>
+</header>
+
+<div style="padding: 20px;">
+  <label for="userName">Your Name:</label>
+  <input type="text" id="userName" name="userName" style="width: 100%; padding: 8px; margin-bottom: 20px;" />
+</div>
+
+<div class="container" id="card-sort">
+  <div class="column" id="unsorted" ondragover="allowDrop(event)" ondrop="drop(event)">
+    <h3>Unsorted Skills</h3>
+    <div class="card" draggable="true">Designing machines, components or systems</div>
+    <div class="card" draggable="true">Organising and retrieving data efficiently</div>
+    <div class="card" draggable="true">Setting patterns or trends in data</div>
+    <div class="card" draggable="true">Interpreting numbers or accounts at a glance</div>
+    <div class="card" draggable="true">Fund raising</div>
+    <div class="card" draggable="true">Using a foreign language at work</div>
+    <div class="card" draggable="true">Getting the best out of social media</div>
+    <div class="card" draggable="true">Mastering computer applications</div>
+    <div class="card" draggable="true">Exploiting the advantages of Information Technology</div>
+    <div class="card" draggable="true">Having insight, seeing future trends</div>
+    <div class="card" draggable="true">Assessing situations and people quickly and accurately</div>
+    <div class="card" draggable="true">Appraising, improving processes, layouts, structures</div>
+    <div class="card" draggable="true">Building and maintaining customer relationships</div>
+    <div class="card" draggable="true">Developing and building on the ideas of others</div>
+    <div class="card" draggable="true">Researching a topic thoroughly</div>
+  </div>
+  <div class="column" id="very-competent" ondragover="allowDrop(event)" ondrop="drop(event)">
+    <h3>Very Competent</h3>
+  </div>
+  <div class="column" id="competent" ondragover="allowDrop(event)" ondrop="drop(event)">
+    <h3>Competent</h3>
+  </div>
+  <div class="column" id="adequate" ondragover="allowDrop(event)" ondrop="drop(event)">
+    <h3>Adequate for Task</h3>
+  </div>
+  <div class="column" id="undeveloped" ondragover="allowDrop(event)" ondrop="drop(event)">
+    <h3>Undeveloped</h3>
+  </div>
+</div>
+
+<div style="text-align:center;">
+  <button onclick="showStageTwo()">Next: Reflect on Your Skills</button>
+</div>
+
+<div class="stage-two" id="stage-two">
+  <h2>Reflection</h2>
+  <div class="selection-box">
+    <label>Undeveloped: Select 2 different skills</label><br/>
+    <select id="undeveloped1"></select>
+    <select id="undeveloped2"></select>
+  </div>
+  <div class="selection-box">
+    <label>Competent: Select 2 different skills</label><br/>
+    <select id="competent1"></select>
+    <select id="competent2"></select>
+  </div>
+  <div class="selection-box">
+    <label>Adequate for Task: Select 2 different skills</label><br/>
+    <select id="adequate1"></select>
+    <select id="adequate2"></select>
+  </div>
+  <button id="submit-reflection">Next: Rank Very Competent Skills</button>
+</div>
+
+<div id="second-reflection-stage" style="display:none;">
+  <h2>Final Reflection: Rank Your Very Competent Skills</h2>
+  <ul class="sortable" id="very-competent-sortable"></ul>
+  <button id="submit-final-reflection">Submit Final Reflection</button>
+</div>
+
+<script>
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+function drop(ev) {
+  ev.preventDefault();
+  const data = ev.dataTransfer.getData("text");
+  const dragged = document.getElementById(data);
+  if (dragged) ev.target.closest('.column').appendChild(dragged);
+}
+document.querySelectorAll('.card').forEach((el, i) => {
+  el.id = "card" + i;
+  el.setAttribute("ondragstart", "drag(event)");
+});
+function showStageTwo() {
+  document.getElementById("stage-two").style.display = "block";
+  populateSelects("undeveloped", ["undeveloped1", "undeveloped2"]);
+  populateSelects("competent", ["competent1", "competent2"]);
+  populateSelects("adequate", ["adequate1", "adequate2"]);
+  window.scrollTo(0, document.body.scrollHeight);
+}
+function populateSelects(columnId, selectIds) {
+  const column = document.getElementById(columnId);
+  const cards = column.querySelectorAll(".card");
+  const options = Array.from(cards).map(card =>
+    `<option value="${card.textContent}">${card.textContent}</option>`
+  ).join("");
+  selectIds.forEach(id => document.getElementById(id).innerHTML = options);
+}
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("submit-reflection").addEventListener("click", function () {
+    const cats = ["undeveloped", "competent", "adequate"];
+    for (const cat of cats) {
+      const v1 = document.getElementById(cat + "1").value;
+      const v2 = document.getElementById(cat + "2").value;
+      if (v1 === v2) {
+        alert("Please select two different skills in each category.");
+        return;
+      }
+    }
+
+    const skills = Array.from(document.querySelectorAll("#very-competent .card")).map(c => c.textContent.trim());
+    const sortableList = document.getElementById("very-competent-sortable");
+    sortableList.innerHTML = "";
+    skills.forEach(skill => {
+      const li = document.createElement("li");
+      li.textContent = skill;
+      li.className = "sortable-item";
+      sortableList.appendChild(li);
+    });
+
+    new Sortable(sortableList, { animation: 150 });
+    document.getElementById("second-reflection-stage").style.display = "block";
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+
+  document.getElementById("submit-final-reflection").addEventListener("click", function () {
+    const top3 = Array.from(document.querySelectorAll("#very-competent-sortable li")).slice(0, 3).map(li => li.textContent.trim());
+    const userName = document.getElementById("userName").value || "Anonymous";
+    const output = {
+      name: userName,
+      top2ByCategory: {
+        undeveloped: [document.getElementById("undeveloped1").value, document.getElementById("undeveloped2").value],
+        competent: [document.getElementById("competent1").value, document.getElementById("competent2").value],
+        adequate: [document.getElementById("adequate1").value, document.getElementById("adequate2").value]
+      },
+      top3Enjoyed: top3
+    };
+
+    const blob = new Blob([JSON.stringify(output, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "reflection_results.json";
+    a.click();
+    URL.revokeObjectURL(url);
+
+    alert("Results downloaded. Please email the file to louise.whitehouse@ncas.ac.uk.");
+  });
+});
+</script>
+</body>
+</html>
